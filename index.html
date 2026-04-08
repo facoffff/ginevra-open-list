@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GINEVRA OPEN LIST - TNG/CGO</title>
+    <title>GENEVE OPEN LIST - TNG/CGO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -102,7 +102,7 @@
         .region-emed { background: rgba(245,158,11,0.12); color: #fbbf24; }
         .region-middleeast { background: rgba(236,72,153,0.12); color: #f472b6; }
         .section-divider td { padding: 8px 14px !important; font-size: 0.72rem !important; font-weight: 700 !important; letter-spacing: 2px; color: var(--text-muted) !important; background: rgba(6,182,212,0.04) !important; text-transform: uppercase; }
-        .table-scroll { max-height: 600px; overflow-y: auto; }
+        .table-scroll { overflow-y: visible; }
         .table-scroll::-webkit-scrollbar { width: 4px; }
         .table-scroll::-webkit-scrollbar-track { background: var(--bg-card); }
         .table-scroll::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
@@ -136,7 +136,7 @@
 
     <div class="container">
         <div class="header">
-            <h1>GINEVRA OPEN LIST</h1>
+            <h1>GENEVE OPEN LIST</h1>
             <div class="subtitle">Tonnage &amp; Cargo Overview</div>
             <div class="update-info">Last updated: <span id="updateDate"></span> &mdash; <a href="#" onclick="loadData(); return false;" style="color: var(--accent-cyan); text-decoration: none;">&#x21bb; Refresh</a></div>
         </div>
@@ -148,6 +148,8 @@
             <div class="stat-item"><div class="stat-value" id="totalCargoes">0</div><div class="stat-label">Cargoes</div></div>
             <div class="stat-item"><div class="stat-value" id="atlanticVsl">0</div><div class="stat-label">Atlantic VSL</div></div>
             <div class="stat-item"><div class="stat-value" id="pacificVsl">0</div><div class="stat-label">Pacific VSL</div></div>
+            <div class="stat-item"><div class="stat-value" id="atlanticCgo">0</div><div class="stat-label">Atlantic CGO</div></div>
+            <div class="stat-item"><div class="stat-value" id="pacificCgo">0</div><div class="stat-label">Pacific CGO</div></div>
         </div>
 
         <div class="filter-bar">
@@ -157,10 +159,10 @@
         </div>
 
         <div class="broker-filter-section">
-            <div class="broker-label">Filtra per broker / chi segue</div>
+            <div class="broker-label">Filter by broker</div>
             <div class="broker-toggles">
-                <button class="broker-toggle-all" onclick="toggleAllBrokers(true)">Mostra tutti</button>
-                <button class="broker-toggle-all" onclick="toggleAllBrokers(false)">Nascondi tutti</button>
+                <button class="broker-toggle-all" onclick="toggleAllBrokers(true)">Show all</button>
+                <button class="broker-toggle-all" onclick="toggleAllBrokers(false)">Hide all</button>
                 <div id="brokerToggles" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
             </div>
         </div>
@@ -196,7 +198,7 @@
             </div>
         </div>
 
-        <div class="footer">GINEVRA OPEN LIST &copy; 2026 &mdash; Lightship Chartering</div>
+        <div class="footer">GENEVE OPEN LIST &copy; 2026 &mdash; Lightship Chartering</div>
     </div>
 
     <script>
@@ -252,7 +254,7 @@
     // CSV structure from gviz (skips empty rows, merges headers):
     // Row 0: "VESSELS ATLANTIC VSL" in col 0, "CARGOES ATLANTIC CGO" in col 12
     // Row 1+: data rows. Vessel cols 0-11, Cargo cols 12-23
-    // When col 0 contains "PACIFIC VSL" â switch vessel section to pacific
+    // When col 0 contains "PACIFIC VSL" → switch vessel section to pacific
     // Cargo section may have "PACIFIC CGO" in col 12 at some row
     // Col indices: A=0 name, B=1 dwt, C=2 pos, D=3 open, E=4 eta, F=5 notes, G=6 owner, H=7 price, I=8 broker, J=9 date, K=10 region, L=11 flagS
     // M=12 charterer, N=13 laycanStart, O=14 laycanEnd, P=15 loadPort, Q=16 discharge, R=17 commodity, S=18 size, T=19 ?, U=20 broker, V=21 date, W=22 delivery, X=23 flagS
@@ -378,13 +380,15 @@
 
                 document.getElementById("atlanticVsl").textContent = data.vessels.atlantic.length;
                 document.getElementById("pacificVsl").textContent = data.vessels.pacific.length;
+                document.getElementById("atlanticCgo").textContent = data.cargoes.atlantic.length;
+                document.getElementById("pacificCgo").textContent = data.cargoes.pacific.length;
 
                 renderBrokerToggles();
                 refreshTables();
 
             } catch (err) {
                 console.error("Failed to parse data:", err);
-                errorBanner.textContent = "Errore nel caricamento dati dal Google Sheet. Verifica che il foglio sia pubblicato sul web. (" + err.message + ")";
+                errorBanner.textContent = "Error loading data from Google Sheet. Please verify the sheet is published to the web. (" + err.message + ")";
                 errorBanner.style.display = "block";
             } finally {
                 setTimeout(() => overlay.classList.add("hidden"), 300);
@@ -396,7 +400,7 @@
         script.src = GVIZ_JSONP_URL + "&_t=" + Date.now(); // cache bust
         script.onerror = function() {
             console.error("Failed to load JSONP script");
-            errorBanner.textContent = "Errore di rete. Verifica la connessione e che il foglio sia pubblicato sul web.";
+            errorBanner.textContent = "Network error. Please check your connection and verify the sheet is published to the web.";
             errorBanner.style.display = "block";
             setTimeout(() => overlay.classList.add("hidden"), 300);
         };
