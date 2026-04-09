@@ -190,7 +190,7 @@
                 <div class="table-scroll">
                     <table class="data-table">
                         <thead><tr>
-                            <th>Charterer</th><th>Laycan</th><th>Load</th><th>Discharge</th><th>Commodity</th><th>Size</th><th>Broker</th><th>Delivery</th>
+                            <th>Charterer</th><th>Laycan</th><th>Load</th><th>Discharge</th><th>Commodity</th><th>Size</th><th>Broker</th>
                         </tr></thead>
                         <tbody id="cargoesBody"></tbody>
                     </table>
@@ -500,7 +500,7 @@
             if (filtered.length === 0) return;
             const divRow = document.createElement("tr");
             divRow.className = "section-divider";
-            divRow.innerHTML = `<td colspan="8">${section.label}</td>`;
+            divRow.innerHTML = `<td colspan="7">${section.label}</td>`;
             tbody.appendChild(divRow);
             filtered.forEach(c => {
                 count++;
@@ -515,7 +515,7 @@
                     <td>${c.commodity}</td>
                     <td>${c.size || "\u2014"}</td>
                     <td><span class="broker-badge broker-${c.broker}">${c.broker}</span></td>
-                    <td><span class="region-badge ${regionCls}">${c.delivery}</span></td>
+                    
                 `;
                 tbody.appendChild(tr);
             });
